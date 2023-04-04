@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {auth} from 'fbase';
+import {currUser} from 'fbase';
 import AppRouter from './AppRouter';
  
  
@@ -7,7 +7,7 @@ function App() {
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  console.log(auth.currentUser);
+  console.log(currUser);
 
   return (
     <>

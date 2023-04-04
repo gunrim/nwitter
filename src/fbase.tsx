@@ -1,5 +1,5 @@
 import { FirebaseApp, initializeApp } from "firebase/app";
-import { Auth, User, getAuth } from "firebase/auth";
+import { Auth, User, createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, signOut } from "firebase/auth";
 
 
 const firebaseConfig:any = {
@@ -11,8 +11,9 @@ const firebaseConfig:any = {
     appId: process.env.REACT_APP_FIREBASE_APP_ID    
   };
 
+console.log(firebaseConfig);
+
 const fbase:FirebaseApp = initializeApp(firebaseConfig);
-///export default fbase;
 
 const auth:Auth = getAuth();
 
@@ -23,4 +24,60 @@ const auth:Auth = getAuth();
 //  console.log("로그인 되지 않았습니다.");
 //}
 
-export {fbase, auth}
+
+const createEmailUser = (email:string, password:string) => {
+
+  let returnUsr:User|null;
+   
+  createUserWithEmailAndPassword (auth, email, password)
+  .then((userCredential) => {
+    // Signed in
+    returnUsr = userCredential.user;
+    // ...
+  })
+  .catch((error) => {
+    const errorCode = error.code;
+    const errorMessage = error.message;
+
+    console.log("[" + errorCode + "] : " + errorMessage );
+    // ..
+  });
+
+  return returnUsr!;
+
+}
+
+const loginEmailuser = (email:string, password:string) => {
+
+  signInWithEmailAndPassword(getAuth(), email, password)
+  .then((userCredential) => {
+    // Signed in
+    const user = userCredential.user;
+    // ...
+  })
+  .catch((error) => {
+    const errorCode = error.code;
+    const errorMessage = error.message;
+  });
+}
+
+const logout = () => {
+
+  signOut(getAuth()).then(() => {
+    // Sign-out successful.
+  }).catch((error) => {
+    // An error happened.
+  });
+
+}
+
+const currUser:User|null = auth.currentUser;
+
+
+
+
+
+ 
+
+
+export {fbase, createEmailUser, loginEmailuser, logout, currUser}
