@@ -1,5 +1,5 @@
 import { FirebaseApp, initializeApp } from "firebase/app";
-import { Auth, User, createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, signOut } from "firebase/auth";
+import { Auth, GoogleAuthProvider, User, createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, signInWithPopup, signOut } from "firebase/auth";
 
 
 const firebaseConfig:any = {
@@ -15,7 +15,7 @@ console.log(firebaseConfig);
 
 const fbase:FirebaseApp = initializeApp(firebaseConfig);
 
-const auth:Auth = getAuth();
+const authService:Auth = getAuth();
 
 //const user:User|null = auth.currentUser;
 //if (user){
@@ -29,7 +29,7 @@ const createEmailUser = (email:string, password:string) => {
 
   let returnUsr:User|null;
    
-  createUserWithEmailAndPassword (auth, email, password)
+  createUserWithEmailAndPassword (authService, email, password)
   .then((userCredential) => {
     // Signed in
     returnUsr = userCredential.user;
@@ -49,16 +49,69 @@ const createEmailUser = (email:string, password:string) => {
 
 const loginEmailuser = (email:string, password:string) => {
 
+  let user = null;
+
   signInWithEmailAndPassword(getAuth(), email, password)
   .then((userCredential) => {
     // Signed in
-    const user = userCredential.user;
+    user = userCredential.user;
     // ...
   })
   .catch((error) => {
     const errorCode = error.code;
     const errorMessage = error.message;
   });
+
+  return user;
+}
+
+const socialLogin = (_provider:string) => {
+
+  let provider;
+  let user;
+
+  if (_provider === "google"){
+    provider = new GoogleAuthProvider();
+    // provider.addScope('https://www.googleapis.com/auth/contacts.readonly');
+
+    // const auth = getAuth();
+    // auth.languageCode = 'it';
+
+    // provider.setCustomParameters({
+    //   'login_hint': 'user@example.com'
+    // });
+
+    const auth = getAuth();
+    signInWithPopup(auth, provider)
+    .then((result) => {
+      // This gives you a Google Access Token. You can use it to access the Google API.
+      const credential = GoogleAuthProvider.credentialFromResult(result);
+      const token = credential!.accessToken;
+      // The signed-in user info.
+      user = result.user;
+      // IdP data available using getAdditionalUserInfo(result)
+      // ...
+    }).catch((error) => {
+      // Handle Errors here.
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      // The email of the user's account used.
+      const email = error.customData.email;
+      // The AuthCredential type that was used.
+      const credential = GoogleAuthProvider.credentialFromError(error);
+      // ...
+    });
+
+  }else{
+    
+  }
+
+
+  return user;
+            
+
+
+
 }
 
 const logout = () => {
@@ -71,13 +124,7 @@ const logout = () => {
 
 }
 
-const currUser:User|null = auth.currentUser;
+const firebaseInstance = fbase; 
 
 
-
-
-
- 
-
-
-export {fbase, createEmailUser, loginEmailuser, logout, currUser}
+export {firebaseInstance, createEmailUser, loginEmailuser, logout, authService, socialLogin}
