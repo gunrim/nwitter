@@ -1,5 +1,7 @@
 import { FirebaseApp, initializeApp } from "firebase/app";
+import "firebase/firestore";
 import { Auth, GoogleAuthProvider, User, createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, signInWithPopup, signOut } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
 
 
 const firebaseConfig:any = {
@@ -125,6 +127,9 @@ const logout = () => {
 }
 
 const firebaseInstance = fbase; 
+export const dbService = getFirestore(fbase);
 
 
 export {firebaseInstance, createEmailUser, loginEmailuser, logout, authService, socialLogin}
+ 
+
