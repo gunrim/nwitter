@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
 
-const Navigation = () => <nav>
+const Navigation = (userObj:any) => <nav>
 
     <ul>
         <li>

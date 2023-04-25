@@ -1,0 +1,12 @@
+{
+  "generalConfiguration": {
+    "sortOnBeforeSave": true
+  },
+  "importStringConfiguration": {
+    "quoteMark": "double",
+    "maximumNumberOfImportExpressionsPerLine": {
+      "count": 100
+    },
+    "tabSize": 2
+  }
+}

@@ -1,8 +1,8 @@
-import { dbService } from 'fbase';
-import { addDoc, collection, doc, setDoc } from 'firebase/firestore';
-import React, { useState } from 'react';
+import { dbService } from "fbase";
+import { addDoc, collection, doc, setDoc } from "firebase/firestore";
+import React, { useState } from "react";
 
-const Home = () => {
+const Home = (userObj:any) => {
 
     const [nweet, setNweet] = useState("");
 

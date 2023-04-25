@@ -1,75 +1,62 @@
-import { firebaseInstance, createEmailUser, loginEmailuser, socialLogin,  } from 'fbase';
-import React, { useState } from 'react';
+import "@fortawesome/free-solid-svg-icons";
 
+import AuthForm from "components/AuthForm";
+import { authService, firebaseInstance } from "fbase";
+import {
+  GithubAuthProvider, GoogleAuthProvider, OAuthCredential, signInWithPopup, User, UserCredential
+} from "firebase/auth";
+import React from "react";
+
+import { faGithub, faGoogle, faTwitter } from "@fortawesome/free-brands-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const Auth = () => {
-
-    const [error, setError] = useState("")
-    const [email, setEmail] = useState("gunrim@msn.com");
-    const [password, setPassword] = useState("11111111");
-    const [newAccount, setNewAccount] = useState(true);
-
-    const onChange = (event:any) => {
-        console.log(event.target.name);
-        const {target:{name,value}} = event;
-
-        if (name === "email" ) {
-            setEmail(value)
-        }else if (name === "password") {setPassword(value)}
-    }
-    const onSubmit = (event:any) => {
-        event.preventDefault();
-        let user:any = null;
-        
-        if (newAccount){
-            user = createEmailUser(email, password);
-        }else{
-            user = loginEmailuser(email, password);
+    const onSocialClick = async (event: any) => {
+        const {
+            target: { name },
+        } = event;
+        let provider: any;
+        if (name === "google") {
+            provider = new GoogleAuthProvider();
+        } else if (name === "github") {
+            provider = new GithubAuthProvider();
         }
-
-        // if (user === null || user === undefined){
-        //     setNewAccount(true);
-        // }else{
-        //     setNewAccount(false);
-        // }
-        // console.log(event.target.name);
-    }
-
-    const toggleAccount = () => setNewAccount((prev) => !prev);
-
-    const socialLoginF = (event:any) => {
-        event.preventDefault();
-
-        let provider ;
-        let user:any = null;
-
-        const { target: { name:string}} = event;
-
-        console.log(event);
-
-        if (event.target.name === "google"){
-            user = socialLogin("google")
-
-
-        }
-    }
-
-return (
-<div>
-    <form onSubmit={onSubmit}>
-        <input type="email" name="email" required placeholder='이메일' value={email} onChange={onChange} />
-        <input type="password" name="password" required placeholder='비밀번호' value={password} onChange={onChange} />
-        <input type="submit"   value={newAccount ? "신규 추가" : "로그인"}/><br></br>
-        <span onClick={toggleAccount}>{newAccount ? "Login" : "Create Account"}</span>
-    </form>
-    <div>
-    <button onClick={socialLoginF} name="google">구글 로그인</button>
-    </div>
-
-
-
-</div>
-);
-}
-
+        signInWithPopup(authService, provider)
+            .then((result) => {
+                const credential: OAuthCredential | null = provider.credentialFromResult(result);
+                const token: string | undefined = credential!.accessToken;
+                // The signed-in user info.
+                const user: User = result.user;
+            })
+            .catch((error) => {
+                // Handle Errors here.
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                // The email of the user's account used.
+                const email = error.customData.email;
+                // The AuthCredential type that was used.
+                const credential = provider.credentialFromError(error);
+                // ...
+            });
+    };
+    return (
+        <div className="authContainer">
+            <FontAwesomeIcon
+                icon={faTwitter}
+                color={"#04AAFF"}
+                size="3x"
+                style={{ marginBottom: 30 }}
+            />
+            <AuthForm />
+            <div className="authBtns">
+                <button onClick={onSocialClick} name="google" className="authBtn">
+                    Continue with Google <FontAwesomeIcon icon={faGoogle} />
+                </button>
+                <button onClick={onSocialClick} name="github" className="authBtn">
+                    Continue with Github <FontAwesomeIcon icon={faGithub} />
+                </button>
+            </div>
+        </div>
+    );
+};
 export default Auth;

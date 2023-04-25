@@ -1,8 +1,8 @@
-import { logout } from 'fbase';
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { logout } from "fbase";
+import React from "react";
+import { useNavigate } from "react-router-dom";
 
-const Profile = () =>  {
+const Profile = (userObj:any, refreshUser:any) =>  {
 
     const navigate = useNavigate();
     
